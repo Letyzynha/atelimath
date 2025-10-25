@@ -1,0 +1,29 @@
+# Ignorar diretório do ambiente virtual
+venv/
+.venv/
+
+# Ignorar banco de dados SQLite
+*.sqlite3
+
+# Ignorar arquivos de configuração de ambiente e segredos
+.env
+.env.*
+!*.env.example
+
+# Ignorar arquivos de cache e compilação
+*.pyc
+__pycache__/
+*.orig
+*~
+*.log
+.DS_Store
+
+# Ignorar diretórios de arquivos estáticos coletados
+/static_collected/
+
+# Ignorar arquivos de mídia
+/media/
+
+# Ignorar artefatos de deploy
+Procfile
+runtime.txt
