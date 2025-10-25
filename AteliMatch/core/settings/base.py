@@ -2,43 +2,34 @@
 Configurações base do Django para o projeto AteliMatch.
 """
 from pathlib import Path
-from decouple import config, Csv
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('DJANGO_SECRET_KEY')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
-
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=Csv())
-
+SECRET_KEY = config('DJANGO_SECRET_KEY', default='django-insecure-pdx@jzo0wxhuue4lfq6zvntqsxts=gtvy0ke2=e+r(xvi^msqy')
 
 # Application definition
-
 INSTALLED_APPS = [
-    # Apps padrão do Django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
-    # Apps de terceiros
-    'pytest_django',  # Para testes
+
+    # Third-party apps
+    'pytest_django', # Para testes
 
     # Local apps
-    'user',          # Gerenciamento de usuários
-    'atelie',        # Funcionalidades do ateliê
-    'orders',        # Gerenciamento de pedidos
-    'common',        # Funcionalidades compartilhadas
+    'user.apps.UserConfig',
+    'atelie.apps.AtelieConfig',
+    'orders.apps.OrdersConfig',
+    'common.apps.CommonConfig',
 ]
 
 MIDDLEWARE = [
@@ -71,20 +62,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-from dj_database_url import parse as db_url
-
-DATABASES = {
-    'default': config(
-        'DATABASE_URL',
-        default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
-        cast=db_url
-    )
-}
-
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -103,12 +80,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'user.User'
-AUTHENTICATION_BACKENDS = [
-    'user.backends.EmailAuthBackend',
-    'django.contrib.auth.backends.ModelBackend',
-]
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -120,12 +91,13 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 STATIC_ROOT = BASE_DIR / 'static_collected'
 
 # Default primary key field type
@@ -133,10 +105,25 @@ STATIC_ROOT = BASE_DIR / 'static_collected'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Custom User Model
+AUTH_USER_MODEL = 'user.User'
+
+# Auth Backends for Email Login
+AUTHENTICATION_BACKENDS = [
+    'user.backends.EmailAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# Login/Logout Redirects
 LOGIN_URL = 'user:login'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/' # Será ajustado por perfil no login_view
 LOGOUT_REDIRECT_URL = '/'
 
+# Configurações de Email (padrão console para desenvolvimento)
 EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
+
+# Configuração do Clarity
 CLARITY_ID = config('CLARITY_ID', default='')
+
+# Configuração do PWA (opcional)
 ENABLE_PWA = config('ENABLE_PWA', default=False, cast=bool)
